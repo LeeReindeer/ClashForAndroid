@@ -6,6 +6,9 @@ import java.io.FileReader
 
 import java.util.Properties
 
+/**
+ * Gradle task to build golang library, output .so file
+ */
 open class GolangBuildTask : Exec() {
     private lateinit var options: GolangBuildOptions
     private lateinit var abi: String
@@ -16,14 +19,14 @@ open class GolangBuildTask : Exec() {
         val compilerPrefix = linkerPrefix + options.platform
 
         if ( !toolchainRoot.exists() )
-            throw GradleException("Compiler not found")
+            throw GradleException("Compiler not found in path: " + toolchainRoot.absolutePath)
 
         workingDir = options.sourceDir
 
         environment.put("GOARCH", golangArch())
         environment.put("GOOS", "android")
         environment.put("CGO_ENABLED", "1")
-        environment.put("GOPATH", project.buildDir.resolve("intermediates/gopath").absolutePath)
+//        environment.put("GOPATH", project.buildDir.resolve("intermediates/gopath").absolutePath)
         environment.put("CXX", toolchainRoot.resolve(compilerPrefix + "-clang++".cmd()).absolutePath)
         environment.put("CC", toolchainRoot.resolve(compilerPrefix + "-clang".cmd()).absolutePath)
         environment.put("LD", toolchainRoot.resolve(linkerPrefix + "ld".exe()).absolutePath)
